@@ -63,7 +63,7 @@ The `dashboard-app` (Angular) frontend authenticates against this Keycloak insta
 In Angular’s environment config:
 
 keycloak: {  
- url: 'https://keycloak.app-auth.net',  
+ url: 'https://keycloak.example.com',  
  realm: 'dashboard-realm',  
  clientId: 'dashboard-ui'  
 }

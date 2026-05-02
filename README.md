@@ -1,7 +1,5 @@
 # Platform Auth (Keycloak Deployment)
 
-Production-ready Keycloak deployment using Helm, designed as a centralized IAM layer for frontend applications.
-
 This repository provides a reusable Keycloak deployment module using Helm, designed to act as a centralized Identity and Access Management (IAM) layer for frontend and backend systems.
 
 ---

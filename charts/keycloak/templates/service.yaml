@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "keycloak.fullname" . }}
+  labels:
+    {{ include "keycloak.labels" . | nindent 4 }}
+    app: keycloak
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: keycloak
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}

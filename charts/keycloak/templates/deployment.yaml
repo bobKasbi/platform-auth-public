@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "keycloak.fullname" . }}
+  labels:
+    app: keycloak
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      volumes:                                   # <-- must be defined here, under spec
+        - name: keycloak-data
+          persistentVolumeClaim:
+            claimName: keycloak-data-pvc
+      containers:
+        - name: keycloak
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              value: {{ .Values.auth.adminUser | quote }}
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              value: {{ .Values.auth.adminPassword | quote }}
+
+            # Behind HTTPS ingress with HTTP to pod
+            - name: KC_HOSTNAME
+              value: {{ .Values.ingress.hostname | quote }}
+            - name: KC_PROXY_HEADERS
+              value: "xforwarded"
+            - name: KC_HTTP_ENABLED
+              value: "true"
+          args:
+            - "start-dev"
+            - "--http-host=0.0.0.0"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /realms/master
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: keycloak-data
+              mountPath: /opt/keycloak/data
+          resources:
+{{ toYaml .Values.resources | indent 12 }}

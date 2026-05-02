@@ -1,0 +1,82 @@
+# ------------------------------------------------------------
+# GitLab CI for Keycloak Helm Deployment
+# Stages: build → lint → deploy (manual)
+# Notes:
+# - No echo/printf; all notes are YAML comments.
+# - Uses base64 KUBECONFIG from CI variable KUBECONFIG_BASE64.
+# - Deploys Helm release "keycloak" into KUBE_NAMESPACE with context KUBE_CONTEXT.
+# ------------------------------------------------------------
+
+stages:
+  - build
+  - lint
+  - deploy
+
+variables:
+  KUBE_CONTEXT: "minikube"                             # kube context to use from kubeconfig
+  KUBE_NAMESPACE: "keycloak-system"                            # target namespace
+  HELM_RELEASE: "keycloak"                             # helm release name
+  CHART_PATH: "$CI_PROJECT_DIR/charts/keycloak"        # path to chart
+  VALUES_FILE: "./charts/keycloak/values.yaml"         # values file
+  KUBECONFIG: "$HOME/.kube/config"                     # kubeconfig path in the job
+
+# ------------------------------------------------------------
+# build: Helm charts have nothing to compile
+# ------------------------------------------------------------
+build:
+  stage: build
+  script:
+    - ":"  # no-op
+
+# ------------------------------------------------------------
+# lint: Validate chart + values.yaml with helm lint
+# ------------------------------------------------------------
+lint:
+  stage: lint
+  image:
+    name: alpine/helm:3.12.3
+    entrypoint: [""]
+  tags: [local]
+  script:
+    - helm lint "$CHART_PATH" -f "$VALUES_FILE"
+
+# ------------------------------------------------------------
+# deploy (manual): decode kubeconfig, select context, deploy with helm
+# ------------------------------------------------------------
+deploy:
+  stage: deploy
+  image:
+    name: alpine/helm:3.12.3
+    entrypoint: [""]
+  tags: [local]
+  before_script:
+    # Fail on error/pipe/undefined var
+    - set -euo pipefail
+
+    # Prepare kubeconfig from CI variable (must be base64-encoded)
+    - mkdir -p ~/.kube
+    - echo "$KUBECONFIG_BASE64" | base64 --decode > ~/.kube/config
+    - export KUBECONFIG=~/.kube/config
+
+    # Show contexts (optional; harmless if it fails)
+    - kubectl config get-contexts || true
+
+    # Switch to requested context (don’t fail hard if unavailable)
+    - kubectl config use-context "$KUBE_CONTEXT" || true
+
+    # Quick connectivity probe (non-fatal)
+    - kubectl cluster-info || true
+  script:
+  - |
+    helm upgrade --install "$HELM_RELEASE" "$CHART_PATH" \
+      -f "$VALUES_FILE" \
+      --kube-context "$KUBE_CONTEXT" \
+      --namespace "$KUBE_NAMESPACE" --create-namespace \
+      --atomic --timeout 10m
+  rules:
+    # Auto-deploy if a version tag is pushed
+    - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/'
+    # Manual deploy button after merge to main
+    # - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
+    - when: never

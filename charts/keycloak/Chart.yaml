@@ -1,0 +1,12 @@
+apiVersion: v2
+name: keycloak
+description: Minimal self-contained Keycloak Helm chart
+type: application
+version: 1.0.5
+appVersion: "26.0.2"
+maintainers:
+  - name: Amin Kasbi
+    email: amin.kasbi@example.com
+
+sources:
+  - https://quay.io/keycloak/keycloak

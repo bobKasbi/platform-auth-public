@@ -1,0 +1,89 @@
+# Platform Auth (Keycloak Deployment)
+
+This repository contains the Helm chart and deployment configuration for **Keycloak**, which serves as the central **authentication and authorization service** for the platform.  
+It is designed to run in a **Kubernetes** environment (e.g., Minikube, staging, or production clusters) and provides secure OAuth2/OpenID Connect (OIDC) authentication for the `dashboard-app` frontend and future applications.
+
+---
+
+## 🚀 Purpose
+
+- Deploy Keycloak as a standalone service.
+- Provide a unified identity and access management (IAM) layer.
+- Handle user authentication, token issuance, and role-based access control (RBAC).
+- Integrate cleanly with Angular and other frontend apps via OpenID Connect.
+
+---
+
+## 🧩 Repository Structure
+
+platform-auth/  
+├── Chart.yaml # Helm chart metadata  
+├── values.yaml # Default configuration (Ingress, admin user, DB, etc.)  
+├── templates/ # Helm templates for deployment, service, ingress, secrets  
+├── ci/ # (optional) CI/CD scripts for GitLab  
+└── README.md
+
+---
+
+## ⚙️ Deployment (local Minikube)
+
+1. **Start Minikube**
+
+   minikube start --memory=8192 --cpus=4  
+   minikube addons enable ingress
+
+2. **Deploy Keycloak via Helm**
+
+   helm install keycloak ./charts/keycloak
+
+3. **Check services**
+
+   kubectl get pods  
+   kubectl get svc  
+   kubectl get ingress
+
+4. **Access the Keycloak UI**
+
+   https://keycloak.app-auth.net
+
+   Default credentials:
+
+   - Username: `admin`
+   - Password: `mysecret` (or as configured in `values.yaml`)
+
+---
+
+## 🌍 Integration with Frontend
+
+The `dashboard-app` (Angular) frontend authenticates against this Keycloak instance using OpenID Connect:
+
+| Key          | Example                       |
+| ------------ | ----------------------------- |
+| Keycloak URL | https://keycloak.app-auth.net |
+| Realm        | dashboard-realm               |
+| Client ID    | dashboard-ui                  |
+
+In Angular’s environment config:
+
+keycloak: {  
+ url: 'https://keycloak.app-auth.net',  
+ realm: 'dashboard-realm',  
+ clientId: 'dashboard-ui'  
+}
+
+---
+
+## 🧰 Future Improvements
+
+- Add automatic realm import (JSON)
+- Add custom Keycloak theme
+- CI/CD deployment via GitLab pipelines
+- Persistent PostgreSQL storage
+- HTTPS (TLS via Ingress or Cert-Manager)
+
+---
+
+## 🧑‍💻 Maintainer
+
+**Amin Kasbi** (`bobKasbi`)  
+Infrastructure / DevOps / Frontend Engineer

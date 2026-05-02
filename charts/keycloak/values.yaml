@@ -1,0 +1,45 @@
+# Number of Keycloak replicas (for scaling)
+replicaCount: 1
+
+keycloakVersion: "26.0.2"
+
+# Image configuration
+image:
+  repository: quay.io/keycloak/keycloak
+  tag: "26.0.2"
+  pullPolicy: IfNotPresent
+
+# Admin credentials
+auth:
+  adminUser: admin
+  adminPassword: admin123
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 8080
+
+# Ingress configuration
+ingress:
+  enabled: true
+  hostname: keycloak.app-auth.net
+  tls: true
+
+# Resources (keep small for Minikube)
+resources:
+  limits:
+    memory: "1024Mi"
+    cpu: "500m"
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+
+persistence:
+  enabled: true
+  size: 1Gi
+  storageClassName: standard
+  mountPath: /opt/keycloak/data
+
+# For local Minikube: keycloak.app-auth.net
+# For staging: keycloak.staging.example.com
+# For prod: keycloak.example.com

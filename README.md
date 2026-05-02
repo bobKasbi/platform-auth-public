@@ -56,7 +56,7 @@ The `dashboard-app` (Angular) frontend authenticates against this Keycloak insta
 
 | Key          | Example                       |
 | ------------ | ----------------------------- |
-| Keycloak URL | https://keycloak.app-auth.net |
+| Keycloak URL | https://keycloak.example.com  |
 | Realm        | dashboard-realm               |
 | Client ID    | dashboard-ui                  |
 

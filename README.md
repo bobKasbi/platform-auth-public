@@ -78,6 +78,24 @@ keycloak: {
 
 ---
 
+## 🏗️ Architecture Overview
+
+This Keycloak deployment acts as the central Identity and Access Management (IAM) service in a typical system architecture:
+
+[Frontend (Angular / SPA)]
+        ↓
+[BFF / API Layer]
+        ↓
+[Keycloak (OIDC Provider)]
+        ↓
+[User / Session / Token Management]
+
+- Frontend authenticates users via OpenID Connect (OIDC)
+- BFF handles secured communication and token validation
+- Keycloak manages authentication, authorization, and token issuance
+
+---
+
 ## 🧑‍💻 Maintainer
 
 **Amin Kasbi** (`bobKasbi`)  

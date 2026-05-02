@@ -1,7 +1,8 @@
 # Platform Auth (Keycloak Deployment)
 
-This repository contains the Helm chart and deployment configuration for **Keycloak**, which serves as the central **authentication and authorization service** for the platform.  
-It is designed to run in a **Kubernetes** environment (e.g., Minikube, staging, or production clusters) and provides secure OAuth2/OpenID Connect (OIDC) authentication for the `dashboard-app` frontend and future applications.
+Production-ready Keycloak deployment using Helm, designed as a centralized IAM layer for frontend applications.
+
+This repository provides a reusable Keycloak deployment module using Helm, designed to act as a centralized Identity and Access Management (IAM) layer for frontend and backend systems.
 
 ---
 
@@ -44,12 +45,8 @@ platform-auth/
 
 4. **Access the Keycloak UI**
 
-   https://keycloak.app-auth.net
+   https://keycloak.example.com
 
-   Default credentials:
-
-   - Username: `admin`
-   - Password: `mysecret` (or as configured in `values.yaml`)
 
 ---
 
